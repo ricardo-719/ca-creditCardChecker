@@ -67,10 +67,10 @@ const luhnAlgoCalc = (cardNum) => {
     let luhnVerificationOne = [];
     let luhnVerificationTwo = [];
     let indexCount = 0;
-    for (let i = 1; i < cardNum.length; (i += 2)) {
+    for (let i = cardNum.length - 2; i >= 0; (i -= 2)) {
         luhnVerificationOne[indexCount] = cardNum[i] * 2;
-        console.log(typeof luhnVerificationOne[indexCount])
-        // Numbers with more than two digits have to be add together
+        console.log(luhnVerificationOne[indexCount])
+        // Numbers with more than two digits have to be added together
         if (luhnVerificationOne[indexCount] > 9) {
             let sum = 0;
             let numString = luhnVerificationOne[indexCount] + "";
@@ -81,12 +81,12 @@ const luhnAlgoCalc = (cardNum) => {
         }
         indexCount++;
     }
+    console.log(luhnVerificationOne)
     indexCount = 0;
-    for (let i = 0; i < cardNum.length; (i += 2)) {
+    for (let i = cardNum.length - 1; i >= 0; (i -= 2)) {
         luhnVerificationTwo[indexCount] = cardNum[i];
         indexCount++;
     }
-    console.log(luhnVerificationOne)
     let sumVerificationOne = luhnVerificationOne.reduce((a, b) => a + b);
     console.log(sumVerificationOne)
     let sumVerificationTwo = luhnVerificationTwo.reduce((a, b) => a + b);
@@ -114,8 +114,7 @@ const checkFirstTwoNumbers = (cardNum) => {
     }
 }
 
-// Look at the calculations and pinpoint the issue...
-console.log(validateCred(valid0));
+console.log(validateCred(valid1));
 
 
 
