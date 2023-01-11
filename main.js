@@ -24,21 +24,67 @@ const mystery5 = [4, 9, 1, 3, 5, 4, 0, 4, 6, 3, 0, 7, 2, 5, 2, 3]
 const batch = [valid1, valid2, valid3, valid4, valid5, invalid1, invalid2, invalid3, invalid4, invalid5, mystery1, mystery2, mystery3, mystery4, mystery5]
 
 
-// Add your functions below:
+//Functions below:
 
+// Takes an array of credit card numbers and returns an array with all invalid cards
+const findInvalidCards = (batchOfCards) => {
+    let invalidCardsArray = []
+    let indexCounter = 0;
+    for (card of batchOfCards) {
+        if (validateCred(card) === false) {
+            invalidCardsArray[indexCounter] = card;
+            indexCounter++
+        }
+    }
+    return invalidCardsArray;
+}
+
+const idInvalidCardCompanies = (invalidCards) => {
+    let listOfCompanies = [];
+    let indexCounter = 0;
+    for (card of invalidCards) {
+        let firstDigit = [...card.slice(0, 1)];
+        firstDigit = parseInt(firstDigit.join(''));
+        switch (true) {
+            case firstDigit === 3:
+                listOfCompanies[indexCounter] =  "Amex";
+                break;
+            case firstDigit === 4:
+                listOfCompanies[indexCounter] = "Visa";
+                break;
+            case firstDigit === 5:
+                listOfCompanies[indexCounter] = "Mastercard";
+                break;
+            case firstDigit === 6:
+                listOfCompanies[indexCounter] = "Discover";
+                break;
+            default:
+                listOfCompanies[indexCounter] = 'Company not found';
+                break;
+        }
+        indexCounter++
+    }
+    listOfCompanies = listOfCompanies.filter(uniqueList);
+    return listOfCompanies;
+}
+
+// Filters repeated instances of companies
+const uniqueList = (value, index, self) => {
+    return self.indexOf(value) === index;
+}
+
+// Checks for the validity of the credit card number
 const validateCred = (cardNum) => {
     // Turn array into number to calculate number digits 
     //(.length makes this step unnecesary but I like it, so whatever)
     let joinCardNum = parseInt(cardNum.join(''));
     let numDigitsStatus = checkNumDigits(joinCardNum);
-    console.log(numDigitsStatus)
     // Verify if card's luhn algo is valid (true) or invalid (false)
     let luhnAlgoStatus = luhnAlgoCalc(cardNum);
-    console.log(luhnAlgoStatus)
     // Verify the first two numbers as per requirements
     let firstTwoNumbersStatus = checkFirstTwoNumbers(cardNum);
-    console.log(firstTwoNumbersStatus)
     if (numDigitsStatus && luhnAlgoStatus && firstTwoNumbersStatus) {
+    //if (luhnAlgoStatus) { 
         return true;
     } else {
         return false;
@@ -46,6 +92,7 @@ const validateCred = (cardNum) => {
 
 }
 
+// Checks for the number of digits on the card
 // The number of digits must be 13, 15 or 16 digits long
 const checkNumDigits = (cardNum) => {
     let digitCount = 0;
@@ -60,6 +107,7 @@ const checkNumDigits = (cardNum) => {
     }
 }
 
+// Performs the luhn algorithm and returns valid (true) or invalid (false)
 const luhnAlgoCalc = (cardNum) => {
     // Separate every other number from second-to-last
     // Multiply each digit by two and add them together
@@ -69,7 +117,6 @@ const luhnAlgoCalc = (cardNum) => {
     let indexCount = 0;
     for (let i = cardNum.length - 2; i >= 0; (i -= 2)) {
         luhnVerificationOne[indexCount] = cardNum[i] * 2;
-        console.log(luhnVerificationOne[indexCount])
         // Numbers with more than two digits have to be added together
         if (luhnVerificationOne[indexCount] > 9) {
             let sum = 0;
@@ -81,16 +128,13 @@ const luhnAlgoCalc = (cardNum) => {
         }
         indexCount++;
     }
-    console.log(luhnVerificationOne)
     indexCount = 0;
     for (let i = cardNum.length - 1; i >= 0; (i -= 2)) {
         luhnVerificationTwo[indexCount] = cardNum[i];
         indexCount++;
     }
     let sumVerificationOne = luhnVerificationOne.reduce((a, b) => a + b);
-    console.log(sumVerificationOne)
     let sumVerificationTwo = luhnVerificationTwo.reduce((a, b) => a + b);
-    console.log(sumVerificationTwo)
     let sumVerifications = sumVerificationOne + sumVerificationTwo;
     // If the total’s last digit is 0, the number is valid!
     if (sumVerifications % 10 === 0){
@@ -100,21 +144,23 @@ const luhnAlgoCalc = (cardNum) => {
     }
 }
 
-// Verification first two numbers of the credit card
+// Checks for the first two numbers of the credit card and returns valid (true) or invalid (false)
 // 34, 37, 51 to 55, 40 to 49
 const checkFirstTwoNumbers = (cardNum) => {
    let firstTwoDigits = [...cardNum.slice(0, 2)];
    firstTwoDigits = parseInt(firstTwoDigits.join(''));
    if (firstTwoDigits === 34 || firstTwoDigits === 37 
     || firstTwoDigits > 39 && firstTwoDigits < 50  
-    || firstTwoDigits > 50 && firstTwoDigits < 56 ) {
+    || firstTwoDigits > 50 && firstTwoDigits < 56 
+    || firstTwoDigits > 59 && firstTwoDigits < 70) {
         return true;
     } else {
         return false;
     }
 }
 
-console.log(validateCred(valid1));
+console.log(findInvalidCards(batch))
+console.log(idInvalidCardCompanies(findInvalidCards(batch)));
 
 
 
